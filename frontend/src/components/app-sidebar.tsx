@@ -19,10 +19,10 @@ import Image from "next/image"
 import { useAuth } from "@/lib/auth-context"
 
 // 피드백 클릭 추적 함수
-const trackFeedbackClick = async (userId?: string) => {
+const trackFeedbackClick = async (userId: string) => {
   try {
     const trackingData = {
-      userId: userId || 'anonymous',
+      userId,
       timestamp: new Date().toISOString(),
       currentPage: window.location.pathname,
       dayOfWeek: new Date().toLocaleDateString('ko-KR', { weekday: 'long' }),
@@ -34,9 +34,13 @@ const trackFeedbackClick = async (userId?: string) => {
     existingClicks.push(trackingData);
     localStorage.setItem('feedbackClicks', JSON.stringify(existingClicks));
     
-    console.log('Feedback click tracked:', trackingData);
+    console.log('✅ Feedback click tracked:', trackingData);
+    
+    // 콘솔에 성공 메시지 표시
+    alert('피드백 페이지로 이동합니다!');
   } catch (error) {
-    console.error('Failed to track feedback click:', error);
+    console.error('❌ Failed to track feedback click:', error);
+    // 추적 실패해도 피드백 페이지는 열기
   }
 };
 
@@ -147,16 +151,24 @@ export function AppSidebar({ onUserClick, onClose, ...props }: AppSidebarProps) 
       <SidebarFooter>
         <div className="p-4">
           <Button 
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            className={`w-full ${
+              isAuthenticated 
+                ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                : "bg-gray-400 hover:bg-gray-500 text-white"
+            }`}
             onClick={() => {
-              // 피드백 클릭 추적
-              trackFeedbackClick(user?.id);
-              // 네이버 폼으로 리다이렉트
-              window.open('https://naver.me/FGEhxMpm', '_blank');
+              if (isAuthenticated && user) {
+                // 로그인된 사용자: 피드백 클릭 추적 후 네이버 폼으로 이동
+                trackFeedbackClick(user.id);
+                window.open('https://naver.me/FGEhxMpm', '_blank');
+              } else {
+                // 비로그인 사용자: 로그인 모달 열기
+                onUserClick();
+              }
             }}
           >
             <Send className="w-4 h-4 mr-2" />
-            Send Feedback
+            {isAuthenticated ? "Send Feedback" : "Login to Send Feedback"}
           </Button>
 
           <div
