@@ -19,7 +19,7 @@ interface User {
 }
 
 // API 기본 URL
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export default function AdminPage() {
   const { toast } = useToast()
@@ -208,7 +208,7 @@ export default function AdminPage() {
       {/* 새 사용자 추가 폼 */}
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>베타테스터 추가</CardTitle>
+          <CardTitle>Pre-Beta 테스터 추가</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAddUser} className="space-y-4">
@@ -224,12 +224,13 @@ export default function AdminPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="student_id">학번</Label>
+                <Label htmlFor="student_id">학번 (10자리)</Label>
                 <Input
                   id="student_id"
                   value={newUser.student_id}
                   onChange={(e) => setNewUser({ ...newUser, student_id: e.target.value })}
-                  placeholder="학번을 입력하세요"
+                  placeholder="10자리 학번을 입력하세요"
+                  maxLength={10}
                   required
                 />
               </div>
@@ -254,7 +255,7 @@ export default function AdminPage() {
       {/* 사용자 목록 */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>베타테스터 목록</CardTitle>
+          <CardTitle>Pre-Beta 테스터 목록</CardTitle>
           <div className="flex gap-2">
             <Button variant="outline" onClick={fetchUsers}>
               <RefreshCw className="w-4 h-4 mr-2" />
