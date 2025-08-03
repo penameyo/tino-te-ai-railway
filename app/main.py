@@ -18,7 +18,8 @@ from app.admin_auth import verify_admin_api_key
 # --- [수정] get_db를 database 모듈에서 가져옵니다.
 from app.database import engine, get_db
 
-models.Base.metadata.create_all(bind=engine)
+# 임시로 비활성화 - Supabase 연결 문제 해결 중
+# models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="TINO-TE.ai BETA",
