@@ -44,7 +44,7 @@ export function DeleteConfirmModal({
               다음 노트가 영구적으로 삭제됩니다:
             </p>
             <p className="font-medium text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-gray-800 p-2 rounded">
-              "{noteTitle}"
+              &quot;{noteTitle}&quot;
             </p>
           </div>
           

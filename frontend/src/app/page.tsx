@@ -53,7 +53,7 @@ interface Note {
   id: string;
   title: string;
   date: string;
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
   iconBg: string;
   summary: string;
   transcription: string;
@@ -102,7 +102,7 @@ export default function Dashboard() {
 
       if (notes && notes.length > 0) {
         // 백엔드에서 가져온 노트 데이터 형식에 맞게 변환
-        const formattedNotes = notes.map((note: any) => ({
+        const formattedNotes = notes.map((note: Record<string, unknown>) => ({
           id: note.id,
           title: note.title,
           date: `Created on ${new Date(note.created_at || Date.now()).toLocaleDateString('en-US', {
@@ -119,8 +119,8 @@ export default function Dashboard() {
 
         // 최신 순으로 정렬 (created_at 기준)
         formattedNotes.sort((a: Note, b: Note) => {
-          const dateA = new Date(notes.find((n: any) => n.id === a.id)?.created_at || 0);
-          const dateB = new Date(notes.find((n: any) => n.id === b.id)?.created_at || 0);
+          const dateA = new Date(notes.find((n: Record<string, unknown>) => n.id === a.id)?.created_at as string || 0);
+          const dateB = new Date(notes.find((n: Record<string, unknown>) => n.id === b.id)?.created_at as string || 0);
           return dateB.getTime() - dateA.getTime();
         });
 
@@ -189,7 +189,7 @@ export default function Dashboard() {
   }
 
   // 노트 생성 완료 처리
-  const handleNoteCreated = (newNote: any) => {
+  const handleNoteCreated = (newNote: Note) => {
     // 이미 포맷된 노트 객체가 전달됨
     // 새로 생성된 노트를 목록에 추가
     setUserNotes(prev => [newNote, ...prev]);
