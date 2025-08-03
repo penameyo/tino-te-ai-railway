@@ -151,24 +151,24 @@ export function AppSidebar({ onUserClick, onClose, ...props }: AppSidebarProps) 
       <SidebarFooter>
         <div className="p-4">
           <Button 
-            className={`w-full ${
-              isAuthenticated 
-                ? "bg-blue-600 hover:bg-blue-700 text-white" 
-                : "bg-gray-400 hover:bg-gray-500 text-white"
-            }`}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             onClick={() => {
+              console.log('🔥 Button clicked!');
+              alert('버튼이 클릭되었습니다!');
+              
               if (isAuthenticated && user) {
-                // 로그인된 사용자: 피드백 클릭 추적 후 네이버 폼으로 이동
-                trackFeedbackClick(user.id);
+                console.log('✅ User is authenticated:', user.name);
+                alert(`안녕하세요 ${user.name}님! 피드백 페이지로 이동합니다.`);
                 window.open('https://naver.me/FGEhxMpm', '_blank');
               } else {
-                // 비로그인 사용자: 로그인 모달 열기
+                console.log('❌ User not authenticated');
+                alert('로그인이 필요합니다. 로그인 모달을 엽니다.');
                 onUserClick();
               }
             }}
           >
             <Send className="w-4 h-4 mr-2" />
-            {isAuthenticated ? "Send Feedback" : "Login to Send Feedback"}
+            Send Feedback
           </Button>
 
           <div
