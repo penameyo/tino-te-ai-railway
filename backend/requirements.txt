@@ -14,4 +14,3 @@ requests==2.31.0
 python-dotenv==1.0.0
 aioschedule==0.5.2
 reportlab==4.0.7
-supabase==2.0.0
