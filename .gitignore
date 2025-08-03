@@ -1,0 +1,39 @@
+# 프로젝트 루트 .gitignore
+
+# Environment Variables
+.env
+.env.local
+.env.production
+.env.staging
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+
+# IDE files
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Node modules (if any in root)
+node_modules/
+
+# Virtual environments
+.venv/
+venv/

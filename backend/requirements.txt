@@ -1,0 +1,17 @@
+# Railway 배포용 requirements.txt
+
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+httpx==0.25.2
+pydantic-settings==2.0.3
+sqlalchemy==2.0.23
+alembic==1.12.1
+PyPDF2==3.0.1
+python-docx==1.1.0
+psycopg2-binary==2.9.9
+requests==2.31.0
+python-dotenv==1.0.0
+aioschedule==0.5.2
+reportlab==4.0.7
+supabase==2.0.0

@@ -1,0 +1,156 @@
+"use client"
+
+import type * as React from "react"
+import { Home, ChevronLeft, Send } from "lucide-react"
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+} from "@/components/ui/sidebar"
+import { Button } from "@/components/ui/button"
+import Image from "next/image"
+import { useAuth } from "@/lib/auth-context"
+
+const navigation = [
+  {
+    title: "Dashboard",
+    icon: Home,
+    isActive: true,
+  },
+]
+
+// 크레딧 정보는 사용자 정보에서 가져옵니다
+const DEFAULT_TOTAL_CREDITS = 10; // 기본 총 크레딧 (매일 초기화)
+
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  onUserClick: () => void
+  onClose?: () => void
+}
+
+export function AppSidebar({ onUserClick, onClose, ...props }: AppSidebarProps) {
+  const { user, isAuthenticated } = useAuth();
+  return (
+    <Sidebar {...props}>
+      <SidebarContent>
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2 text-lg font-semibold">
+              <div className="w-6 h-6 rounded overflow-hidden">
+                <Image
+                  src="/tino-logo.png"
+                  alt="TINO-TE.ai"
+                  width={24}
+                  height={24}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              tino-te.ai BETA
+            </div>
+            {onClose && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                className="w-8 h-8 hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
+
+          {/* Credit Info */}
+          {isAuthenticated && user ? (
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-3 mb-4">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg">⚡</span>
+                <span className="text-sm font-medium">Credits</span>
+              </div>
+              <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                {user.daily_credits} / {DEFAULT_TOTAL_CREDITS}
+              </div>
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
+                <div
+                  className={`${
+                    user.daily_credits > 0 
+                      ? "bg-gradient-to-r from-blue-500 to-indigo-500" 
+                      : "bg-gray-400"
+                  } h-2 rounded-full transition-all duration-300`}
+                  style={{ 
+                    width: `${Math.max(0, Math.min(100, (user.daily_credits / DEFAULT_TOTAL_CREDITS) * 100))}%` 
+                  }}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-3 mb-4">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg">⚡</span>
+                <span className="text-sm font-medium">Credits</span>
+              </div>
+              <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                로그인 필요
+              </div>
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
+                <div className="bg-gray-400 h-2 rounded-full transition-all duration-300" style={{ width: '0%' }} />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigation.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={item.isActive}>
+                    <a href="#" className="flex items-center gap-3">
+                      <item.icon className="w-4 h-4" />
+                      {item.title}
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter>
+        <div className="p-4">
+          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+            <Send className="w-4 h-4 mr-2" />
+            Send Feedback
+          </Button>
+
+          <div
+            className="flex items-center gap-3 mt-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+            onClick={onUserClick}
+          >
+            <div className="w-8 h-8 rounded-full overflow-hidden">
+              <Image
+                src="/tino-logo.png"
+                alt="User Avatar"
+                width={32}
+                height={32}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            {isAuthenticated && user ? (
+              <span className="text-sm font-medium">{user.name}</span>
+            ) : (
+              <span className="text-sm font-medium">Log in</span>
+            )}
+          </div>
+        </div>
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  )
+}
