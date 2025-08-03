@@ -18,6 +18,28 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { useAuth } from "@/lib/auth-context"
 
+// 피드백 클릭 추적 함수
+const trackFeedbackClick = async (userId?: string) => {
+  try {
+    const trackingData = {
+      userId: userId || 'anonymous',
+      timestamp: new Date().toISOString(),
+      currentPage: window.location.pathname,
+      dayOfWeek: new Date().toLocaleDateString('ko-KR', { weekday: 'long' }),
+      weekNumber: Math.ceil((new Date().getDate()) / 7)
+    };
+    
+    // 로컬 스토리지에 임시 저장 (나중에 API로 전송)
+    const existingClicks = JSON.parse(localStorage.getItem('feedbackClicks') || '[]');
+    existingClicks.push(trackingData);
+    localStorage.setItem('feedbackClicks', JSON.stringify(existingClicks));
+    
+    console.log('Feedback click tracked:', trackingData);
+  } catch (error) {
+    console.error('Failed to track feedback click:', error);
+  }
+};
+
 const navigation = [
   {
     title: "Dashboard",
@@ -124,7 +146,15 @@ export function AppSidebar({ onUserClick, onClose, ...props }: AppSidebarProps) 
 
       <SidebarFooter>
         <div className="p-4">
-          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+          <Button 
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            onClick={() => {
+              // 피드백 클릭 추적
+              trackFeedbackClick(user?.id);
+              // 네이버 폼으로 리다이렉트
+              window.open('https://naver.me/FGEhxMpm', '_blank');
+            }}
+          >
             <Send className="w-4 h-4 mr-2" />
             Send Feedback
           </Button>
