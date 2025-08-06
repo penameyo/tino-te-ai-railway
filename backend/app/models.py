@@ -1,7 +1,7 @@
 # /TINO-TE.ai-BETA-backend/app/models.py
 
 import uuid
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Date
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID # UUID 타입을 위해 추가

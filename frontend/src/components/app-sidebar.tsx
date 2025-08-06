@@ -28,14 +28,14 @@ const trackFeedbackClick = async (userId: string) => {
       dayOfWeek: new Date().toLocaleDateString('ko-KR', { weekday: 'long' }),
       weekNumber: Math.ceil((new Date().getDate()) / 7)
     };
-    
+
     // 로컬 스토리지에 임시 저장 (나중에 API로 전송)
     const existingClicks = JSON.parse(localStorage.getItem('feedbackClicks') || '[]');
     existingClicks.push(trackingData);
     localStorage.setItem('feedbackClicks', JSON.stringify(existingClicks));
-    
+
     console.log('✅ Feedback click tracked:', trackingData);
-    
+
     // 콘솔에 성공 메시지 표시
     alert('피드백 페이지로 이동합니다!');
   } catch (error) {
@@ -103,13 +103,12 @@ export function AppSidebar({ onUserClick, onClose, ...props }: AppSidebarProps) 
               </div>
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
                 <div
-                  className={`${
-                    user.daily_credits > 0 
-                      ? "bg-gradient-to-r from-blue-500 to-indigo-500" 
+                  className={`${user.daily_credits > 0
+                      ? "bg-gradient-to-r from-blue-500 to-indigo-500"
                       : "bg-gray-400"
-                  } h-2 rounded-full transition-all duration-300`}
-                  style={{ 
-                    width: `${Math.max(0, Math.min(100, (user.daily_credits / DEFAULT_TOTAL_CREDITS) * 100))}%` 
+                    } h-2 rounded-full transition-all duration-300`}
+                  style={{
+                    width: `${Math.max(0, Math.min(100, (user.daily_credits / DEFAULT_TOTAL_CREDITS) * 100))}%`
                   }}
                 />
               </div>
@@ -150,12 +149,12 @@ export function AppSidebar({ onUserClick, onClose, ...props }: AppSidebarProps) 
 
       <SidebarFooter>
         <div className="p-4">
-          <Button 
+          <Button
             className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             onClick={() => {
               console.log('🔥 Button clicked!');
               alert('버튼이 클릭되었습니다!');
-              
+
               if (isAuthenticated && user) {
                 console.log('✅ User is authenticated:', user.name);
                 alert(`안녕하세요 ${user.name}님! 피드백 페이지로 이동합니다.`);

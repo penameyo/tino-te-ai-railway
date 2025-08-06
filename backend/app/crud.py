@@ -3,6 +3,8 @@
 from sqlalchemy.orm import Session
 import secrets
 import uuid
+from datetime import datetime
+from typing import Optional
 
 # 우리가 만든 models.py와 schemas.py를 가져옵니다.
 from . import models, schemas

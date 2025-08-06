@@ -2,7 +2,8 @@
 
 from pydantic import BaseModel
 import uuid
-from datetime import datetime
+from datetime import datetime, date
+from typing import Optional
 
 # --- 기존 코드 ---
 class NoteBase(BaseModel):
@@ -44,7 +45,7 @@ class Token(BaseModel):
 
 class User(UserBase):
     """데이터베이스에서 읽어온 사용자 정보를 나타내는 모델"""
-    id: int
+    id: uuid.UUID
     api_key: str
     daily_credits: int  # 데이터베이스 필드명과 일치
     notes: list[Note] = [] # 사용자가 작성한 노트 목록
