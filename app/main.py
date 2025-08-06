@@ -21,10 +21,11 @@ from app.database import engine, get_db
 # 데이터베이스 테이블 생성 (Supabase 연결 복구)
 try:
     models.Base.metadata.create_all(bind=engine)
-    print("✅ Database connection successful")
+    logger.info("✅ Database connection successful")
 except Exception as e:
-    print(f"❌ Database connection failed: {e}")
+    logger.error(f"❌ Database connection failed: {e}")
     # 연결 실패해도 앱은 실행되도록 함
+    # Admin API는 데이터베이스 연결이 필요하므로 별도 처리 필요
 
 app = FastAPI(
     title="TINO-TE.ai BETA",

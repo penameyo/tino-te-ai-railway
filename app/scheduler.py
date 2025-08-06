@@ -23,10 +23,14 @@ async def reset_credits_job():
 
 async def start_scheduler():
     """스케줄러 시작"""
-    # 매일 자정에 크레딧 초기화 작업 예약
-    aioschedule.every().day.at("00:00").do(reset_credits_job)
-    logger.info("스케줄러가 시작되었습니다. 매일 자정에 크레딧이 초기화됩니다.")
+    try:
+        # 매일 자정에 크레딧 초기화 작업 예약
+        aioschedule.every().day.at("00:00").do(reset_credits_job)
+        logger.info("스케줄러가 시작되었습니다. 매일 자정에 크레딧이 초기화됩니다.")
 
-    while True:
-        await aioschedule.run_pending()
-        await asyncio.sleep(1)
+        while True:
+            await aioschedule.run_pending()
+            await asyncio.sleep(60)  # 1분마다 체크 (1초는 너무 빈번)
+    except Exception as e:
+        logger.error(f"스케줄러 오류: {e}")
+        # 스케줄러 오류가 전체 앱을 중단시키지 않도록 함
