@@ -1,7 +1,0 @@
-# PDF 생성을 위한 추가 패키지
-reportlab==4.0.4
-Pillow==10.0.0
-
-# AWS Lambda 배포용 경량화 패키지 (선택사항)
-# weasyprint==60.0  # HTML to PDF (더 고급 기능)
-# pdfkit==1.0.0     # wkhtmltopdf wrapper

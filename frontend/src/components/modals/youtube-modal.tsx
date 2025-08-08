@@ -27,7 +27,14 @@ export function YouTubeModal({ open, onOpenChange }: YouTubeModalProps) {
         <div className="space-y-4 mt-6">
           <Input placeholder="Paste a YouTube link" className="h-12" />
 
-          <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white h-12">Generate Notes</Button>
+          <Button 
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white h-12"
+            onClick={() => {
+              alert('추후 업데이트 예정입니다!');
+            }}
+          >
+            Generate Notes
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

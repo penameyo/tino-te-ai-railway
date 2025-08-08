@@ -152,16 +152,10 @@ export function AppSidebar({ onUserClick, onClose, ...props }: AppSidebarProps) 
           <Button
             className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             onClick={() => {
-              console.log('🔥 Button clicked!');
-              alert('버튼이 클릭되었습니다!');
-
               if (isAuthenticated && user) {
-                console.log('✅ User is authenticated:', user.name);
-                alert(`안녕하세요 ${user.name}님! 피드백 페이지로 이동합니다.`);
                 window.open('https://naver.me/FGEhxMpm', '_blank');
               } else {
-                console.log('❌ User not authenticated');
-                alert('로그인이 필요합니다. 로그인 모달을 엽니다.');
+                alert('로그인이 필요합니다.');
                 onUserClick();
               }
             }}
