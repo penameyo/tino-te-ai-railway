@@ -28,7 +28,7 @@ export function UserProfileModal({ open, onOpenChange }: UserProfileModalProps) 
           <div className="flex flex-col items-center w-full">
             <div className="w-20 h-20 rounded-full overflow-hidden mb-4">
               <Image
-                src="/tino-logo.png"
+                src="/mascot-logo.png"
                 alt="User Avatar"
                 width={80}
                 height={80}

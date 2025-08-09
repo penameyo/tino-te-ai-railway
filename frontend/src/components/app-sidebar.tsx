@@ -70,7 +70,7 @@ export function AppSidebar({ onUserClick, onClose, ...props }: AppSidebarProps) 
             <div className="flex items-center gap-2 text-lg font-semibold">
               <div className="w-6 h-6 rounded overflow-hidden">
                 <Image
-                  src="/tino-logo.png"
+                  src="/mascot-logo.png"
                   alt="TINO-TE.ai"
                   width={24}
                   height={24}
@@ -170,7 +170,7 @@ export function AppSidebar({ onUserClick, onClose, ...props }: AppSidebarProps) 
           >
             <div className="w-8 h-8 rounded-full overflow-hidden">
               <Image
-                src="/tino-logo.png"
+                src="/mascot-logo.png"
                 alt="User Avatar"
                 width={32}
                 height={32}
