@@ -5,7 +5,7 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Mic, FileText, FolderPlus, MoreHorizontal, ChevronRight } from "lucide-react"
+import { Mic, FileText, FolderPlus, MoreHorizontal, ChevronRight, LogOut } from "lucide-react"
 import { AudioModal } from "@/components/modals/audio-modal"
 
 import { DocumentModal } from "@/components/modals/document-modal"
@@ -75,7 +75,7 @@ export default function Dashboard() {
   const [deleteConfirmModalOpen, setDeleteConfirmModalOpen] = useState(false)
   const [noteToDelete, setNoteToDelete] = useState<Note | null>(null)
 
-  const { isAuthenticated, user, token } = useAuth()
+  const { isAuthenticated, user, token, logout } = useAuth()
   const { toast } = useToast()
 
   // 로그인 상태에 따라 노트 데이터 가져오기
@@ -247,6 +247,16 @@ export default function Dashboard() {
             {!isAuthenticated && (
               <Button variant="outline" onClick={() => setLoginModalOpen(true)}>
                 로그인
+              </Button>
+            )}
+            {isAuthenticated && (
+              <Button 
+                variant="outline" 
+                onClick={logout}
+                className="flex items-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                Log out
               </Button>
             )}
             <ThemeToggle />
