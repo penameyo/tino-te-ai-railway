@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Mic, FileText, FolderPlus, MoreHorizontal, ChevronRight } from "lucide-react"
 import { AudioModal } from "@/components/modals/audio-modal"
-import { YouTubeModal } from "@/components/modals/youtube-modal"
+
 import { DocumentModal } from "@/components/modals/document-modal"
 import { FolderModal } from "@/components/modals/folder-modal"
 import { UserProfileModal } from "@/components/modals/user-profile-modal"
@@ -62,7 +62,7 @@ interface Note {
 
 export default function Dashboard() {
   const [audioModalOpen, setAudioModalOpen] = useState(false)
-  const [youtubeModalOpen, setYoutubeModalOpen] = useState(false)
+
   const [documentModalOpen, setDocumentModalOpen] = useState(false)
   const [folderModalOpen, setFolderModalOpen] = useState(false)
   const [userProfileOpen, setUserProfileOpen] = useState(false)
@@ -87,10 +87,10 @@ export default function Dashboard() {
 
   // 모달이 닫힐 때마다 노트 목록 새로고침
   useEffect(() => {
-    if (!audioModalOpen && !documentModalOpen && !youtubeModalOpen && isAuthenticated && token) {
+    if (!audioModalOpen && !documentModalOpen && isAuthenticated && token) {
       fetchNotes();
     }
-  }, [audioModalOpen, documentModalOpen, youtubeModalOpen]);
+  }, [audioModalOpen, documentModalOpen]);
 
   // 백엔드에서 노트 데이터 가져오기
   const fetchNotes = async () => {
@@ -211,7 +211,11 @@ export default function Dashboard() {
         setAudioModalOpen(true)
         break
       case "youtube":
-        setYoutubeModalOpen(true)
+        toast({
+          title: "Coming Soon!",
+          description: "유튜브 기능은 곧 제공될 예정입니다.",
+          duration: 3000,
+        });
         break
       case "document":
         setDocumentModalOpen(true)
@@ -376,7 +380,7 @@ export default function Dashboard() {
         onOpenChange={setAudioModalOpen}
         onNoteCreated={handleNoteCreated}
       />
-      <YouTubeModal open={youtubeModalOpen} onOpenChange={setYoutubeModalOpen} />
+
       <DocumentModal
         open={documentModalOpen}
         onOpenChange={setDocumentModalOpen}
