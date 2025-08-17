@@ -5,7 +5,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """애플리케이션 설정을 관리하는 클래스"""
     OPENAI_API_KEY: str
-    DEEPSEEK_API_KEY: str
     DATABASE_URL: str = "postgresql://user:password@localhost:5432/database"
     SECRET_KEY: str = "your-secret-key-change-in-production"
     
