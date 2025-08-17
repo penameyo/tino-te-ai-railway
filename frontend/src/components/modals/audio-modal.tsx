@@ -57,6 +57,11 @@ export function AudioModal({ open, onOpenChange, onNoteCreated }: AudioModalProp
   }, [open])
 
   const resetState = () => {
+    // 녹음 중이면 먼저 중단
+    if (isRecording && mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop()
+    }
+    
     setIsRecording(false)
     setRecordingTime(0)
     setAudioBlob(null)
@@ -65,6 +70,37 @@ export function AudioModal({ open, onOpenChange, onNoteCreated }: AudioModalProp
     if (timerRef.current) {
       clearInterval(timerRef.current)
     }
+  }
+
+  // 녹음 중일 때 모달 닫기 방지
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen && isRecording) {
+      // 녹음 중이면 확인 메시지 표시
+      const shouldClose = window.confirm(
+        "녹음이 진행 중입니다. 정말로 닫으시겠습니까?\n녹음 중인 내용이 손실될 수 있습니다."
+      );
+      
+      if (shouldClose) {
+        // 사용자가 확인하면 녹음 중단하고 모달 닫기
+        stopRecording();
+        onOpenChange(false);
+      }
+      // 사용자가 취소하면 모달을 열린 상태로 유지
+      return;
+    }
+    
+    if (!newOpen && isProcessing) {
+      // 처리 중이면 확인 메시지 표시
+      const shouldClose = window.confirm(
+        "오디오 처리가 진행 중입니다. 정말로 닫으시겠습니까?\n처리 중인 내용이 손실될 수 있습니다."
+      );
+      
+      if (!shouldClose) {
+        return;
+      }
+    }
+    
+    onOpenChange(newOpen);
   }
 
   const formatTime = (seconds: number) => {
@@ -111,6 +147,13 @@ export function AudioModal({ open, onOpenChange, onNoteCreated }: AudioModalProp
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop()
       setIsRecording(false)
+      
+      // 미디어 스트림 완전히 정리
+      if (mediaRecorderRef.current.stream) {
+        mediaRecorderRef.current.stream.getTracks().forEach(track => {
+          track.stop()
+        })
+      }
     }
   }
 
@@ -227,7 +270,7 @@ export function AudioModal({ open, onOpenChange, onNoteCreated }: AudioModalProp
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex flex-col items-center w-full">
@@ -249,8 +292,9 @@ export function AudioModal({ open, onOpenChange, onNoteCreated }: AudioModalProp
                     </div>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold">{formatTime(recordingTime)}</p>
-                    <p className="text-sm text-gray-500">Recording in progress...</p>
+                    <p className="text-2xl font-bold text-red-600">{formatTime(recordingTime)}</p>
+                    <p className="text-sm text-red-500 font-medium">🔴 녹음 중... (모달을 닫지 마세요)</p>
+                    <p className="text-xs text-gray-500 mt-1">녹음을 완료하려면 "Stop recording" 버튼을 눌러주세요</p>
                   </div>
                   <Button
                     className="w-full bg-gray-600 hover:bg-gray-700 text-white h-12"
