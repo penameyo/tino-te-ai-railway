@@ -35,18 +35,12 @@ async def transcribe_media_with_whisper(file: UploadFile) -> str:
             files = {'file': (file.filename, file_content, file.content_type)}
             headers = {'Authorization': f'Bearer {settings.OPENAI_API_KEY}'}
             
-            # 전사 품질 향상을 위한 설정
+            # 최적화된 전사 설정 (속도와 품질의 균형)
             data = {
                 'model': 'whisper-1',
                 'language': 'ko',  # 한국어 설정으로 전사 품질 향상
-                'prompt': '''이것은 한국어 교육 콘텐츠입니다. 강의, 세미나, 회의, 또는 학습 관련 대화 내용일 수 있습니다. 
-다음 사항을 고려하여 정확하게 전사해주세요:
-- 전문 용어와 학술 용어를 정확히 인식
-- 숫자, 날짜, 고유명사를 정확히 표기
-- 문장 부호를 적절히 사용하여 읽기 쉽게 구성
-- 불필요한 추임새나 반복은 자연스럽게 정리''',
                 'temperature': 0.0,  # 가장 일관성 있는 전사를 위해 0으로 설정
-                'response_format': 'text'  # 텍스트 형식으로 응답
+                'response_format': 'text'  # 텍스트 형식으로 응답 (JSON보다 빠름)
             }
 
             print(f"Whisper API 요청 시작...")

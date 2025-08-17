@@ -23,6 +23,8 @@ export function AudioModal({ open, onOpenChange, onNoteCreated }: AudioModalProp
   const [recordingTime, setRecordingTime] = useState(0)
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [processingStep, setProcessingStep] = useState<string>("")
+  const [processingProgress, setProcessingProgress] = useState<number>(0)
   const [dragActive, setDragActive] = useState(false)
   const [showCreditConfirm, setShowCreditConfirm] = useState(false)
   const [pendingFile, setPendingFile] = useState<File | null>(null)
@@ -66,6 +68,8 @@ export function AudioModal({ open, onOpenChange, onNoteCreated }: AudioModalProp
     setRecordingTime(0)
     setAudioBlob(null)
     setIsProcessing(false)
+    setProcessingStep("")
+    setProcessingProgress(0)
     audioChunksRef.current = []
     if (timerRef.current) {
       clearInterval(timerRef.current)
@@ -216,9 +220,33 @@ export function AudioModal({ open, onOpenChange, onNoteCreated }: AudioModalProp
     
     console.log('Starting audio processing:', { fileName: pendingFile.name, fileSize: pendingFile.size, fileType: pendingFile.type });
     setIsProcessing(true);
+    setProcessingProgress(0);
 
     try {
+      // 1단계: 파일 업로드 준비
+      setProcessingStep("🎵 오디오 파일 준비 중...");
+      setProcessingProgress(10);
+      await new Promise(resolve => setTimeout(resolve, 500)); // 시각적 피드백
+
+      // 2단계: 음성 전사 시작
+      setProcessingStep("🎤 음성을 텍스트로 변환 중...");
+      setProcessingProgress(30);
+      
+      // 3단계: API 호출 (실제 처리)
+      setProcessingStep("🤖 AI가 음성을 분석하고 있어요...");
+      setProcessingProgress(60);
+      
       const result = await createNoteFromMedia(pendingFile, token)
+      
+      // 4단계: 노트 생성 완료
+      setProcessingStep("📝 학습 노트 생성 중...");
+      setProcessingProgress(90);
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // 5단계: 완료
+      setProcessingStep("✅ 완료!");
+      setProcessingProgress(100);
+      
       console.log('Audio processing successful:', result);
       toast({
         title: "노트 생성 완료",
@@ -244,17 +272,24 @@ export function AudioModal({ open, onOpenChange, onNoteCreated }: AudioModalProp
         onNoteCreated(createdNote);
       }
       
+      await new Promise(resolve => setTimeout(resolve, 500)); // 완료 메시지 표시
       onOpenChange(false)
     } catch (error) {
       console.error('Error processing audio file:', error)
+      setProcessingStep("❌ 처리 중 오류가 발생했습니다");
+      setProcessingProgress(0);
       toast({
         title: "처리 오류",
         description: error instanceof Error ? error.message : "오디오 파일 처리 중 오류가 발생했습니다.",
         variant: "destructive"
       })
     } finally {
-      setIsProcessing(false)
-      setPendingFile(null);
+      setTimeout(() => {
+        setIsProcessing(false)
+        setProcessingStep("")
+        setProcessingProgress(0)
+        setPendingFile(null);
+      }, 1000);
     }
   }
 
@@ -371,9 +406,28 @@ export function AudioModal({ open, onOpenChange, onNoteCreated }: AudioModalProp
           )}
 
           {isProcessing && !audioBlob && (
-            <div className="flex justify-center items-center py-4">
-              <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-              <span className="ml-2">Processing your audio...</span>
+            <div className="space-y-4 py-4">
+              <div className="flex justify-center items-center">
+                <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+                <span className="ml-2 font-medium">{processingStep}</span>
+              </div>
+              
+              {/* 진행률 바 */}
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                <div
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${processingProgress}%` }}
+                />
+              </div>
+              
+              <div className="text-center">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {processingProgress}% 완료
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  잠시만 기다려주세요. AI가 열심히 작업 중이에요! 🤖
+                </p>
+              </div>
             </div>
           )}
         </div>
