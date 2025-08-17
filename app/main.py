@@ -118,7 +118,7 @@ async def create_note_from_media(
 
     try:
         transcription = await services.transcribe_media_with_whisper(file)
-        summarized_result = await services.summarize_text_with_deepseek(transcription)
+        summarized_result = await services.summarize_text_with_openai(transcription)
     except HTTPException as e:
         raise e
 
@@ -276,8 +276,8 @@ async def create_note_from_document(
         if len(text) > 10000:
             text = text[:10000] + "...(생략됨)"
             
-        # DeepSeek API로 요약
-        summarized_result = await services.summarize_text_with_deepseek(text)
+        # OpenAI API로 요약
+        summarized_result = await services.summarize_text_with_openai(text)
         
         # 노트 생성
         note_data = schemas.Note(

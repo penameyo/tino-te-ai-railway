@@ -127,16 +127,16 @@ async def extract_text_from_document(file: UploadFile) -> str:
             detail=f"문서 처리 중 오류가 발생했습니다: {str(e)}"
         )
 
-async def summarize_text_with_deepseek(text: str) -> dict:
+async def summarize_text_with_openai(text: str) -> dict:
     """
-    DeepSeek R1 API를 호출하여 텍스트를 학습 노트 형식으로 변환합니다.
+    OpenAI GPT-4o-mini API를 호출하여 텍스트를 학습 노트 형식으로 변환합니다.
     """
     
     try:
         async with httpx.AsyncClient() as client:
             headers = {
                 'Content-Type': 'application/json',
-                'Authorization': f'Bearer {settings.DEEPSEEK_API_KEY}'
+                'Authorization': f'Bearer {settings.OPENAI_API_KEY}'
             }
             
             # 더 구체적이고 효과적인 프롬프트 작성
@@ -174,9 +174,9 @@ async def summarize_text_with_deepseek(text: str) -> dict:
 
 학습자가 이 노트만 보고도 핵심 내용을 완전히 이해하고 활용할 수 있도록 작성해주세요."""
             
-            # DeepSeek R1 API에 보낼 요청 본문 구성
+            # OpenAI GPT-4o-mini API에 보낼 요청 본문 구성
             payload = {
-                "model": "deepseek-reasoner",  # DeepSeek R1 모델 사용
+                "model": "gpt-4o-mini",  # OpenAI GPT-4o-mini 모델 사용
                 "messages": [
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt}
@@ -188,25 +188,25 @@ async def summarize_text_with_deepseek(text: str) -> dict:
                 "presence_penalty": 0.1   # 새로운 주제 도입 장려
             }
 
-            print(f"DeepSeek API 요청 시작...")
+            print(f"OpenAI API 요청 시작...")
             
-            # DeepSeek API에 POST 요청을 보냅니다.
+            # OpenAI API에 POST 요청을 보냅니다.
             response = await client.post(
-                DEEPSEEK_API_URL, headers=headers, json=payload, timeout=180
+                "https://api.openai.com/v1/chat/completions", headers=headers, json=payload, timeout=180
             )
             
-            print(f"DeepSeek API 응답 상태: {response.status_code}")
+            print(f"OpenAI API 응답 상태: {response.status_code}")
             
             if response.status_code != 200:
-                print(f"DeepSeek API 오류: {response.text}")
+                print(f"OpenAI API 오류: {response.text}")
                 raise HTTPException(
                     status_code=response.status_code,
-                    detail=f"DeepSeek API Error: {response.text}"
+                    detail=f"OpenAI API Error: {response.text}"
                 )
                 
             # 응답에서 요약된 내용을 추출합니다.
             ai_response = response.json()["choices"][0]["message"]["content"]
-            print(f"DeepSeek 응답: {ai_response[:200]}...")
+            print(f"OpenAI 응답: {ai_response[:200]}...")
             
             # AI 응답을 파싱하여 제목과 요약을 분리
             try:
@@ -245,7 +245,7 @@ async def summarize_text_with_deepseek(text: str) -> dict:
                 }
                 
     except Exception as e:
-        print(f"DeepSeek API 호출 중 예외 발생: {str(e)}")
+        print(f"OpenAI API 호출 중 예외 발생: {str(e)}")
         raise HTTPException(
             status_code=500,
             detail=f"텍스트 요약 중 오류가 발생했습니다: {str(e)}"
