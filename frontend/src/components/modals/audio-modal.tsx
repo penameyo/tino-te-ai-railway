@@ -309,10 +309,22 @@ export function AudioModal({ open, onOpenChange, onNoteCreated }: AudioModalProp
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex flex-col items-center w-full">
-            <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mb-4">
-              <Mic className="w-8 h-8 text-white" />
+            <div className="relative w-20 h-20 mb-6">
+              {/* 배경 그라데이션 원 */}
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-600 rounded-full shadow-lg"></div>
+              {/* 글로우 효과 */}
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-full blur-md opacity-50 animate-pulse"></div>
+              {/* 아이콘 */}
+              <div className="relative w-full h-full flex items-center justify-center">
+                <Mic className="w-9 h-9 text-white drop-shadow-sm" />
+              </div>
             </div>
-            <DialogTitle className="text-xl font-semibold text-center">Record or upload audio</DialogTitle>
+            <DialogTitle className="text-2xl font-bold text-center bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              🎤 음성 노트 생성
+            </DialogTitle>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 text-center">
+              음성을 녹음하거나 파일을 업로드해서 AI 학습 노트를 만들어보세요
+            </p>
           </div>
         </DialogHeader>
 
@@ -320,38 +332,83 @@ export function AudioModal({ open, onOpenChange, onNoteCreated }: AudioModalProp
           {!audioBlob ? (
             <>
               {isRecording ? (
-                <div className="space-y-4">
-                  <div className="flex justify-center items-center">
-                    <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center animate-pulse">
-                      <Mic className="w-8 h-8 text-white" />
+                <div className="space-y-6">
+                  {/* 녹음 중 애니메이션 */}
+                  <div className="flex justify-center items-center relative">
+                    {/* 파동 효과 */}
+                    <div className="absolute w-24 h-24 bg-red-500 rounded-full opacity-20 animate-ping"></div>
+                    <div className="absolute w-20 h-20 bg-red-500 rounded-full opacity-30 animate-ping" style={{animationDelay: '0.15s'}}></div>
+                    <div className="absolute w-16 h-16 bg-red-500 rounded-full opacity-40 animate-ping" style={{animationDelay: '0.3s'}}></div>
+                    
+                    {/* 중앙 녹음 아이콘 */}
+                    <div className="relative w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
+                      <Mic className="w-8 h-8 text-white drop-shadow-sm" />
                     </div>
                   </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-red-600">{formatTime(recordingTime)}</p>
-                    <p className="text-sm text-red-500 font-medium">🔴 녹음 중... (모달을 닫지 마세요)</p>
-                    <p className="text-xs text-gray-500 mt-1">녹음을 완료하려면 "Stop recording" 버튼을 눌러주세요</p>
+                  
+                  {/* 녹음 시간 및 상태 */}
+                  <div className="text-center space-y-3">
+                    <div className="bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-xl p-4 border border-red-100 dark:border-red-800">
+                      <p className="text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
+                        {formatTime(recordingTime)}
+                      </p>
+                      <div className="flex items-center justify-center gap-2 mt-2">
+                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                        <p className="text-sm font-medium text-red-600 dark:text-red-400">녹음 진행 중</p>
+                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-3 border border-amber-200 dark:border-amber-800">
+                      <p className="text-xs text-amber-700 dark:text-amber-300 font-medium">
+                        ⚠️ 녹음 중에는 모달을 닫지 마세요
+                      </p>
+                      <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                        완료하려면 아래 "녹음 중지" 버튼을 눌러주세요
+                      </p>
+                    </div>
                   </div>
+                  
+                  {/* 녹음 중지 버튼 */}
                   <Button
-                    className="w-full bg-gray-600 hover:bg-gray-700 text-white h-12"
+                    className="w-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white h-12 shadow-lg transition-all duration-200 hover:shadow-xl"
                     onClick={stopRecording}
                   >
-                    <StopCircle className="w-4 h-4 mr-2" />
-                    Stop recording
+                    <StopCircle className="w-5 h-5 mr-2" />
+                    녹음 중지
                   </Button>
                 </div>
               ) : (
                 <>
                   <Button
-                    className="w-full bg-red-600 hover:bg-red-700 text-white h-12"
+                    className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white h-14 shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-[1.02] font-medium"
                     onClick={startRecording}
                     disabled={isProcessing}
                   >
-                    <Mic className="w-4 h-4 mr-2" />
-                    Record audio live
+                    <div className="flex items-center justify-center gap-3">
+                      <div className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center">
+                        <Mic className="w-3 h-3" />
+                      </div>
+                      🎤 실시간 음성 녹음
+                    </div>
                   </Button>
 
+                  {/* 구분선 */}
+                  <div className="flex items-center gap-4 my-6">
+                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent dark:via-gray-600"></div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 font-medium px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full">
+                      또는
+                    </span>
+                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent dark:via-gray-600"></div>
+                  </div>
+
+                  {/* 파일 업로드 영역 */}
                   <div
-                    className={`border-2 border-dashed ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300'} rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer`}
+                    className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 cursor-pointer group ${
+                      dragActive 
+                        ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 shadow-lg scale-[1.02]' 
+                        : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-gradient-to-br hover:from-gray-50 hover:to-blue-50 dark:hover:from-gray-800/50 dark:hover:to-blue-900/20'
+                    }`}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
@@ -365,8 +422,37 @@ export function AudioModal({ open, onOpenChange, onNoteCreated }: AudioModalProp
                       onChange={handleFileChange}
                       disabled={isProcessing}
                     />
-                    <Upload className="w-6 h-6 mx-auto mb-2 text-gray-400" />
-                    <p className="text-gray-600">Drag .mp3 audio file here, or click to select</p>
+                    
+                    {/* 업로드 아이콘 */}
+                    <div className="relative mb-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+                        <Upload className="w-6 h-6 text-white" />
+                      </div>
+                      {dragActive && (
+                        <div className="absolute inset-0 bg-blue-500 rounded-full blur-md opacity-30 animate-pulse"></div>
+                      )}
+                    </div>
+                    
+                    {/* 업로드 텍스트 */}
+                    <div className="space-y-2">
+                      <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+                        📁 오디오 파일 업로드
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        .mp3, .wav, .m4a 파일을 드래그하거나 클릭해서 선택하세요
+                      </p>
+                      <div className="flex items-center justify-center gap-2 mt-3">
+                        <div className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 rounded text-xs text-blue-600 dark:text-blue-400 font-medium">
+                          MP3
+                        </div>
+                        <div className="px-2 py-1 bg-green-100 dark:bg-green-900/30 rounded text-xs text-green-600 dark:text-green-400 font-medium">
+                          WAV
+                        </div>
+                        <div className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 rounded text-xs text-purple-600 dark:text-purple-400 font-medium">
+                          M4A
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </>
               )}
@@ -406,26 +492,59 @@ export function AudioModal({ open, onOpenChange, onNoteCreated }: AudioModalProp
           )}
 
           {isProcessing && !audioBlob && (
-            <div className="space-y-4 py-4">
-              <div className="flex justify-center items-center">
-                <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-                <span className="ml-2 font-medium">{processingStep}</span>
-              </div>
-              
-              {/* 진행률 바 */}
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-                <div
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500 ease-out"
-                  style={{ width: `${processingProgress}%` }}
-                />
-              </div>
-              
+            <div className="space-y-6 py-6">
+              {/* 처리 중 헤더 */}
               <div className="text-center">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {processingProgress}% 완료
+                <div className="relative inline-flex items-center justify-center w-16 h-16 mb-4">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full animate-spin opacity-20"></div>
+                  <div className="relative w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                    <Loader2 className="w-6 h-6 animate-spin text-white" />
+                  </div>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                  AI가 작업 중이에요
+                </h3>
+                <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                  {processingStep}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  잠시만 기다려주세요. AI가 열심히 작업 중이에요! 🤖
+              </div>
+              
+              {/* 세련된 진행률 바 */}
+              <div className="space-y-3">
+                <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden shadow-inner">
+                  <div
+                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 rounded-full transition-all duration-700 ease-out shadow-sm"
+                    style={{ width: `${processingProgress}%` }}
+                  >
+                    {/* 진행률 바 내부 글로우 효과 */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-full"></div>
+                    {/* 움직이는 하이라이트 */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-full animate-pulse"></div>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    진행률
+                  </span>
+                  <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                    {processingProgress}%
+                  </span>
+                </div>
+              </div>
+              
+              {/* 격려 메시지 */}
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-blue-100 dark:border-blue-800">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                  <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                </div>
+                <p className="text-sm text-center text-gray-700 dark:text-gray-300 font-medium">
+                  잠시만 기다려주세요. 곧 완성됩니다! ✨
+                </p>
+                <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-1">
+                  고품질 학습 노트를 생성하고 있어요 🤖
                 </p>
               </div>
             </div>
