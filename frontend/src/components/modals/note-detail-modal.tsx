@@ -6,6 +6,9 @@ import { Download } from "lucide-react"
 import { useRef } from 'react'
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/components/ui/use-toast"
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { downloadNotePDF } from "@/lib/pdf-utils"
 
 interface Note {
   id: string;
@@ -48,8 +51,8 @@ export function NoteDetailModal({ open, onOpenChange, note }: NoteDetailModalPro
     URL.revokeObjectURL(url);
   };
 
-  // PDF 다운로드 함수 (임시로 텍스트 다운로드)
-  const downloadAsPDF = () => {
+  // PDF 다운로드 함수
+  const downloadAsPDF = async () => {
     if (!token) {
       toast({
         title: "로그인 필요",
@@ -59,13 +62,21 @@ export function NoteDetailModal({ open, onOpenChange, note }: NoteDetailModalPro
       return;
     }
 
-    // 현재는 텍스트 파일로 다운로드 (서버 설정 후 PDF로 변경 예정)
-    downloadAsText();
-    
-    toast({
-      title: "다운로드 완료",
-      description: "노트가 텍스트 파일로 다운로드되었습니다.",
-    });
+    try {
+      await downloadNotePDF(note.id, token, note.title);
+      toast({
+        title: "다운로드 완료",
+        description: "노트가 PDF로 다운로드되었습니다.",
+      });
+    } catch (error) {
+      console.error('PDF 다운로드 오류:', error);
+      // 백업으로 텍스트 다운로드
+      downloadAsText();
+      toast({
+        title: "다운로드 완료",
+        description: "노트가 텍스트 파일로 다운로드되었습니다.",
+      });
+    }
   };
 
   return (
@@ -100,11 +111,22 @@ export function NoteDetailModal({ open, onOpenChange, note }: NoteDetailModalPro
         <div ref={contentRef} className="mt-6 space-y-6">
           {/* 요약 섹션 */}
           <div>
-            <h3 className="text-lg font-semibold mb-3 dark:text-gray-100">Summary</h3>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-              <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+            <h3 className="text-lg font-semibold mb-3 dark:text-gray-100">📝 학습 노트</h3>
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+              <ReactMarkdown 
+                remarkPlugins={[remarkGfm]}
+                className="prose prose-sm max-w-none dark:prose-invert
+                  prose-headings:text-gray-900 dark:prose-headings:text-gray-100
+                  prose-p:text-gray-700 dark:prose-p:text-gray-300
+                  prose-strong:text-gray-900 dark:prose-strong:text-gray-100
+                  prose-ul:text-gray-700 dark:prose-ul:text-gray-300
+                  prose-ol:text-gray-700 dark:prose-ol:text-gray-300
+                  prose-li:text-gray-700 dark:prose-li:text-gray-300
+                  prose-code:text-blue-600 dark:prose-code:text-blue-400
+                  prose-pre:bg-gray-100 dark:prose-pre:bg-gray-700"
+              >
                 {note.summary}
-              </p>
+              </ReactMarkdown>
             </div>
           </div>
 
